@@ -2,16 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -31,7 +22,6 @@ export function ForgotPasswordForm({
     setError(null);
 
     try {
-      // The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/update-password`,
       });
@@ -45,60 +35,88 @@ export function ForgotPasswordForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("w-full", className)} {...props}>
       {success ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              If you registered using your email and password, you will receive
-              a password reset email.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="apple-auth-card">
+          <div className="flex flex-col items-center mb-8">
+            <div className="apple-logo-ring mb-5" style={{ background: "linear-gradient(135deg, #30d158 0%, #25a244 100%)" }}>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              </svg>
+            </div>
+            <h1 className="apple-heading">Check Your Email</h1>
+            <p className="apple-subheading">Password reset instructions sent</p>
+          </div>
+          <div className="apple-input-group">
+            <div className="apple-input-field">
+              <p className="text-sm text-center" style={{ color: "rgba(255,255,255,0.6)", lineHeight: "1.6" }}>
+                If an account exists for <strong style={{ color: "rgba(255,255,255,0.9)" }}>{email}</strong>, you will receive a password reset link shortly.
+              </p>
+            </div>
+          </div>
+          <p className="apple-footer-text mt-6">
+            <Link href="/auth/login" className="apple-link">
+              Back to Sign In
+            </Link>
+          </p>
+        </div>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-            <CardDescription>
-              Type in your email and we&apos;ll send you a link to reset your
-              password
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgotPassword}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Sending..." : "Send reset email"}
-                </Button>
+        <div className="apple-auth-card">
+          <div className="flex flex-col items-center mb-8">
+            <div className="apple-logo-ring mb-5" style={{ background: "linear-gradient(135deg, #ff9f0a 0%, #ff6b00 100%)" }}>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-white">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+            </div>
+            <h1 className="apple-heading">Reset Password</h1>
+            <p className="apple-subheading">We&apos;ll send you a reset link</p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="apple-input-group">
+              <div className="apple-input-field">
+                <label className="apple-label" htmlFor="email">Email</label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="apple-input"
+                />
               </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link
-                  href="/auth/login"
-                  className="underline underline-offset-4"
-                >
-                  Login
-                </Link>
+            </div>
+
+            {error && (
+              <div className="apple-error-box">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                </svg>
+                <span>{error}</span>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            )}
+
+            <button type="submit" disabled={isLoading} className="apple-btn-primary">
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                  </svg>
+                  Sending…
+                </span>
+              ) : "Send Reset Link"}
+            </button>
+          </form>
+
+          <p className="apple-footer-text mt-6">
+            Remember your password?{" "}
+            <Link href="/auth/login" className="apple-link">
+              Sign In
+            </Link>
+          </p>
+        </div>
       )}
     </div>
   );
